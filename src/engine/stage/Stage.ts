@@ -332,9 +332,8 @@ export class Stage {
     // Composition box: the player, plus the loose tape beside (landscape) or below (portrait) it.
     const boxW = this.portrait ? 136 : 136 + c * 128;
     const boxH = this.portrait ? 118 + c * 96 : 118;
-    const fitH = boxH / 0.66 / 2 / tanHalf;
-    const fitW = boxW / 0.84 / 2 / (tanHalf * aspect);
-    let dist = Math.max(fitH, fitW);
+    const fit = (w: number, h: number): number => Math.max(h / 0.66 / 2 / tanHalf, w / 0.84 / 2 / (tanHalf * aspect));
+    let dist = fit(boxW, boxH);
     const target = new THREE.Vector3(this.portrait ? 0 : c * 60, this.portrait ? -c * 48 : 2, 0);
     // Macro views: reels through the window, or the keys from above.
     const reels = this.viewMix[0];
@@ -342,12 +341,13 @@ export class Stage {
     if (reels > 1e-3) {
       const focus = this.poser.cassettePose.p.clone();
       target.lerp(focus, reels);
-      dist = THREE.MathUtils.lerp(dist, Math.max(150, dist * 0.36), reels);
+      // Close on the tape window: the shell's width with a little air.
+      dist = THREE.MathUtils.lerp(dist, fit(112, 78), reels);
     }
     if (keys > 1e-3) {
       const focus = new THREE.Vector3(0, BODY.hh, 0).applyMatrix4(this.asm.rig('player').matrixWorld);
       target.lerp(focus, keys);
-      dist = THREE.MathUtils.lerp(dist, Math.max(170, dist * 0.42), keys);
+      dist = THREE.MathUtils.lerp(dist, fit(124, 64), keys);
     }
     this.camera.aspect = aspect;
     this.camera.position.set(target.x, target.y, dist);

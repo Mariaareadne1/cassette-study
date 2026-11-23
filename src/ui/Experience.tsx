@@ -33,6 +33,7 @@ export default function Experience() {
   const host = useRef<HTMLDivElement>(null);
   const [engine, setEngine] = useState<Engine | null>(null);
   const [failed, setFailed] = useState<string | null>(null);
+  const [boot, setBoot] = useState({ step: 'Setting type', p: 0.1 });
   const view = useDeck(engine?.controller ?? null);
 
   const drawLabels = useCallback((stage: Stage, tape: LoadedTape, art: Art | null) => {
@@ -50,6 +51,10 @@ export default function Experience() {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches || q.has('reduced');
     (async () => {
       await fontsReady();
+      if (disposed || !host.current) return;
+      setBoot({ step: 'Building the object', p: 0.45 });
+      // Let the progress paint before the (synchronous) scene build.
+      await new Promise((r) => requestAnimationFrame(() => r(null)));
       if (disposed || !host.current) return;
       try {
         stage = new Stage(
@@ -85,7 +90,9 @@ export default function Experience() {
       drawLabels(s, demo, null);
       window.__cassette = { controller, stage: s, ready: false, labels: (t, a) => drawLabels(s, t, a) };
       setEngine({ controller, stage: s });
+      setBoot({ step: 'Threading the tape', p: 0.8 });
       await controller.loadTape(demo);
+      if (!disposed) setBoot({ step: 'Ready', p: 1 });
       if (window.__cassette) window.__cassette.ready = true;
     })();
     const onBlur = (): void => stage?.cancelGestures();
@@ -102,9 +109,21 @@ export default function Experience() {
   return (
     <main className="cs" data-ready={engine ? '' : undefined}>
       <div className="cs-stage" ref={host} />
+      {!failed && (
+        <div className="cs-boot" data-done={boot.p >= 1 ? '' : undefined} aria-hidden={boot.p >= 1}>
+          <div className="cs-boot-inner" role="progressbar" aria-label="Loading" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(boot.p * 100)}>
+            {boot.step}
+            <div className="cs-boot-bar">
+              <span style={{ transform: `scaleX(${boot.p})` }} />
+            </div>
+          </div>
+        </div>
+      )}
       {failed && (
         <p className="cs-fail" role="alert">
-          Cassette Study needs WebGL, and this browser couldn’t start it. ({failed})
+          <strong>The object couldn’t be drawn.</strong>
+          Cassette Study needs WebGL 2, and this browser or device couldn’t start it. Try a recent Chrome, Safari or Firefox with
+          hardware acceleration on. <small>({failed})</small>
         </p>
       )}
       {engine && view && <Hud engine={engine} view={view} onDrawLabels={drawLabels} />}
