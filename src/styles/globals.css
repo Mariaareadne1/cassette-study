@@ -1,0 +1,23 @@
+:root {
+  --paper: #fbfaf7;
+  --ink: #1d1e21;
+  --ink-soft: #6c6b67;
+  --rule: rgba(29, 30, 33, 0.12);
+  --accent: #8fb6d9;
+  --accent-ink: #2f5d84;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); }
+body { font-family: var(--font-sans), system-ui, sans-serif; -webkit-font-smoothing: antialiased; overscroll-behavior: none; }
+.app-root { height: 100%; }
+.cs { position: fixed; inset: 0; overflow: hidden; }
+.cs-stage { position: absolute; inset: 0; touch-action: none; }
+.cs-stage canvas { display: block; width: 100%; height: 100%; }
+.cs-head { position: absolute; left: 32px; top: 28px; pointer-events: none; }
+.cs-index { margin: 0; font: 500 11px/1 var(--font-mono), monospace; letter-spacing: 0.08em; color: var(--ink-soft); }
+.cs-title { margin: 8px 0 0; font: 400 44px/1 var(--font-serif), serif; letter-spacing: -0.01em; }
+.cs-time { position: absolute; left: 32px; bottom: 76px; margin: 0; font: 400 12px var(--font-mono), monospace; color: var(--ink-soft); }
+.cs-strip { position: absolute; left: 32px; bottom: 28px; display: flex; gap: 6px; }
+.cs-strip button { font: 500 11px var(--font-mono), monospace; background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 8px 12px; color: var(--ink); cursor: pointer; }
+.cs-fail { position: absolute; inset: auto 32px 50% 32px; text-align: center; font: 400 15px/1.5 var(--font-sans); }
