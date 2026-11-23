@@ -12,6 +12,11 @@ import { useDeck } from './useDeck';
 export interface Engine {
   controller: DeckController;
   stage: Stage;
+  /** Artwork for the next labels drawn (null for none). */
+  setArt: (art: Art | null) => void;
+  getArt: () => Art | null;
+  /** Redraws both labels for a tape, e.g. while editing it. */
+  drawLabels: (tape: LoadedTape['meta'], art: Art | null) => void;
 }
 
 declare global {
@@ -83,13 +88,22 @@ export default function Experience() {
         return;
       }
       const s = stage;
+      let art: Art | null = null;
       controller.onTapeChanged = (tape) => {
-        if (tape) drawLabels(s, tape, null);
+        if (tape) drawLabels(s, tape, art);
       };
       const demo: LoadedTape = { meta: DEMO_TAPE, urls: { ...DEMO_URLS } };
       drawLabels(s, demo, null);
       window.__cassette = { controller, stage: s, ready: false, labels: (t, a) => drawLabels(s, t, a) };
-      setEngine({ controller, stage: s });
+      setEngine({
+        controller,
+        stage: s,
+        setArt: (a) => {
+          art = a;
+        },
+        getArt: () => art,
+        drawLabels: (meta, a) => drawLabels(s, { meta, urls: { A: null, B: null } }, a),
+      });
       setBoot({ step: 'Threading the tape', p: 0.8 });
       await controller.loadTape(demo);
       if (!disposed) setBoot({ step: 'Ready', p: 1 });
@@ -126,7 +140,7 @@ export default function Experience() {
           hardware acceleration on. <small>({failed})</small>
         </p>
       )}
-      {engine && view && <Hud engine={engine} view={view} onDrawLabels={drawLabels} />}
+      {engine && view && <Hud engine={engine} view={view} />}
     </main>
   );
 }

@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
-import type { ControllerView, LoadedTape } from '@/deck/controller';
-import type { Stage, ViewMode } from '@/engine/stage/Stage';
-import type { Art } from '@/engine/textures/label';
+import { useCallback, useEffect, useState } from 'react';
+import type { ControllerView } from '@/deck/controller';
+import type { ViewMode } from '@/engine/stage/Stage';
+import type { TapeMeta } from '@/library/schema';
 import type { Engine } from './Experience';
 import { About } from './hud/About';
 import { Dialog } from './hud/Dialog';
@@ -10,16 +10,13 @@ import { Icon } from './hud/icons';
 import { Toast } from './hud/Toast';
 import { Transport } from './hud/Transport';
 import { useShortcuts } from './hud/useShortcuts';
+import { MakeTape } from './library/MakeTape';
+import { ShelfView } from './library/ShelfView';
+import { useShelf } from './library/useShelf';
 
 export type Panel = 'make' | 'shelf' | 'about' | null;
 
-type Props = {
-  engine: Engine;
-  view: ControllerView;
-  onDrawLabels: (stage: Stage, tape: LoadedTape, art: Art | null) => void;
-  /** Library surfaces (Make a Tape, Shelf) are supplied by the page. */
-  renderPanel?: (panel: 'make' | 'shelf', close: () => void) => ReactNode;
-};
+type Props = { engine: Engine; view: ControllerView };
 
 const VIEWS: ReadonlyArray<{ id: ViewMode; label: string }> = [
   { id: 'hero', label: 'Object' },
@@ -39,13 +36,18 @@ function useCoarsePointer(): boolean {
   return coarse;
 }
 
-export function Hud({ engine, view, renderPanel }: Props) {
+export function Hud({ engine, view }: Props) {
   const { controller, stage } = engine;
   const [panel, setPanel] = useState<Panel>(null);
+  const [editing, setEditing] = useState<TapeMeta | null>(null);
+  const shelf = useShelf(engine);
   const [mode, setMode] = useState<ViewMode>('hero');
   const [mixer, setMixer] = useState(false);
   const touch = useCoarsePointer();
-  const close = useCallback(() => setPanel(null), []);
+  const close = useCallback(() => {
+    setPanel(null);
+    setEditing(null);
+  }, []);
   const toggleMute = useCallback(() => controller.setMuted(!controller.getView().muted), [controller]);
   useShortcuts(engine, panel === null, toggleMute);
 
@@ -68,7 +70,14 @@ export function Hud({ engine, view, renderPanel }: Props) {
       </header>
 
       <nav className="cs-actions" aria-label="Study">
-        <button type="button" className="cs-pill cs-pill-accent" onClick={() => setPanel('make')}>
+        <button
+          type="button"
+          className="cs-pill cs-pill-accent"
+          onClick={() => {
+            setEditing(null);
+            setPanel('make');
+          }}
+        >
           Make a tape
         </button>
         <button type="button" className="cs-pill" onClick={() => setPanel('shelf')}>
@@ -138,16 +147,37 @@ export function Hud({ engine, view, renderPanel }: Props) {
       <Dialog title="About this study" open={panel === 'about'} onClose={close}>
         <About />
       </Dialog>
-      {renderPanel && (
-        <>
-          <Dialog title="Make a tape" open={panel === 'make'} onClose={close} wide>
-            {renderPanel('make', close)}
-          </Dialog>
-          <Dialog title="Shelf" open={panel === 'shelf'} onClose={close} wide>
-            {renderPanel('shelf', close)}
-          </Dialog>
-        </>
-      )}
+      <Dialog title={editing ? 'Edit tape' : 'Make a tape'} open={panel === 'make'} onClose={close} wide>
+        <MakeTape
+          key={editing?.id ?? 'new'}
+          engine={engine}
+          shelf={shelf}
+          initial={editing}
+          onDone={async (saved, playNow) => {
+            close();
+            if (playNow) await shelf.play(saved);
+            else controller.say(`“${saved.title}” is on the shelf`);
+          }}
+        />
+      </Dialog>
+      <Dialog title="Shelf" open={panel === 'shelf'} onClose={close} wide>
+        <ShelfView
+          engine={engine}
+          shelf={shelf}
+          onPlay={async (t) => {
+            close();
+            await shelf.play(t);
+          }}
+          onEdit={(t) => {
+            setEditing(t);
+            setPanel('make');
+          }}
+          onNew={() => {
+            setEditing(null);
+            setPanel('make');
+          }}
+        />
+      </Dialog>
     </>
   );
 }

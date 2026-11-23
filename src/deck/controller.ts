@@ -55,6 +55,7 @@ export class DeckController {
   private timeline: TimelineEntry[] | null = null;
   private keyReleaseTimers = new Map<KeyName, number>();
   private loadToken = 0;
+  private waiters: Array<{ pred: (s: DeckSnapshot) => boolean; done: (ok: boolean) => void; left: number }> = [];
   /** Set by the page when deterministic capture drives time instead of audio. */
   virtualClock = false;
   onTapeChanged: (tape: LoadedTape | null) => void = () => {};
@@ -126,6 +127,44 @@ export class DeckController {
     if (errors.length) this.say(errors.join(' · '), 'warn');
     this.onTapeChanged(tape);
     this.emit();
+  }
+
+  /**
+   * Changes tapes the way a person would: a seated tape is ejected and set down, the label
+   * changes while it rests, and the new tape goes back in.
+   */
+  async swapTape(tape: LoadedTape): Promise<void> {
+    const s = this.deck.snapshot();
+    const wasIn = s.cassette === 'seated' || s.cassette === 'inserting';
+    if (s.cassette !== 'outside' && s.cassette !== 'seated') this.cancelHold();
+    if (wasIn) {
+      if (s.door === 'closed') this.press('eject');
+      await this.until((d) => d.door === 'open', 4);
+      this.deck.remove();
+      this.process();
+      await this.until((d) => d.cassette === 'outside', 4);
+    }
+    await this.loadTape(tape);
+    if (wasIn) this.insertOrRemove();
+  }
+
+  /** Resolves once the deck satisfies `pred`, or after `seconds` of deck time. */
+  private until(pred: (s: DeckSnapshot) => boolean, seconds: number): Promise<boolean> {
+    if (pred(this.deck.snapshot())) return Promise.resolve(true);
+    return new Promise((done) => this.waiters.push({ pred, done, left: seconds }));
+  }
+
+  private settleWaiters(dt: number): void {
+    if (!this.waiters.length) return;
+    const s = this.deck.snapshot();
+    const pending: typeof this.waiters = [];
+    for (const w of this.waiters) {
+      const left = w.left - dt;
+      if (w.pred(s)) w.done(true);
+      else if (left <= 0) w.done(false);
+      else pending.push({ ...w, left });
+    }
+    this.waiters = pending;
   }
 
   get currentTape(): LoadedTape | null {
@@ -264,6 +303,7 @@ export class DeckController {
     }
     if (s.mode === 'fastForward' || s.mode === 'rewind') this.sfx?.setWindRate(1);
     this.process(false);
+    this.settleWaiters(dt);
     this.sinceEmit += dt;
     if (this.sinceEmit > 0.1) {
       this.sinceEmit = 0;
@@ -377,5 +417,7 @@ export class DeckController {
     this.audio.dispose();
     for (const t of this.keyReleaseTimers.values()) window.clearTimeout(t);
     this.listeners.clear();
+    for (const w of this.waiters) w.done(false);
+    this.waiters = [];
   }
 }

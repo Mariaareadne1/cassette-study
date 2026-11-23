@@ -1,0 +1,40 @@
+// Visual QA of the library dialogs. usage: node scripts/shoot-ui.mjs [baseUrl] [outDir] [--w= --h=]
+import { chromium } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const args = process.argv.slice(2);
+const flag = (k, d) => (args.find((a) => a.startsWith(`--${k}=`)) ?? `--${k}=${d}`).split('=')[1];
+const pos = args.filter((a) => !a.startsWith('--'));
+const base = pos[0] ?? 'http://localhost:5560';
+const out = pos[1] ?? 'artifacts/ui';
+fs.mkdirSync(out, { recursive: true });
+const fx = (f) => path.resolve('tests/fixtures', f);
+
+const browser = await chromium.launch({ args: ['--use-angle=metal', '--enable-gpu', '--ignore-gpu-blocklist'] });
+const page = await browser.newPage({ viewport: { width: Number(flag('w', 1440)), height: Number(flag('h', 900)) } });
+await page.goto(base);
+await page.waitForFunction(() => window.__cassette?.ready);
+await page.getByRole('button', { name: 'Make a tape' }).click();
+const d = page.getByRole('dialog', { name: 'Make a tape' });
+await d.getByLabel('Title').fill('Kitchen Radio');
+await d.getByLabel('Note').fill('Sunday mornings, 1999');
+await d.locator('#cs-side-A').setInputFiles(fx('tone-a.wav'));
+await d.locator('#cs-side-B').setInputFiles(fx('tone-b.wav'));
+await d.locator('#cs-art').setInputFiles(fx('art.png'));
+await d.getByLabel('Sage').check({ force: true });
+await page.waitForTimeout(800);
+await page.screenshot({ path: path.join(out, 'make.png') });
+await d.getByRole('button', { name: 'Save to shelf' }).click();
+await page.getByRole('button', { name: 'Shelf', exact: true }).click();
+await page.waitForTimeout(800);
+await page.screenshot({ path: path.join(out, 'shelf.png') });
+const dl = page.waitForEvent('download');
+await page.getByRole('listitem').filter({ hasText: 'Kitchen Radio' }).getByRole('button', { name: 'Collector card' }).click();
+await (await dl).saveAs(path.join(out, 'card.png'));
+await page.keyboard.press('Escape');
+await page.getByRole('button', { name: 'About' }).click();
+await page.waitForTimeout(400);
+await page.screenshot({ path: path.join(out, 'about.png') });
+await browser.close();
+console.log('ui shots in', out);
