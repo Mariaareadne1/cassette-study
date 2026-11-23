@@ -1,0 +1,188 @@
+[
+ {
+  "t": 2.7,
+  "type": "cassetteTap"
+ },
+ {
+  "t": 2.7,
+  "type": "cue",
+  "detail": "lidOpen"
+ },
+ {
+  "t": 3.933333333333329,
+  "type": "cue",
+  "detail": "seat"
+ },
+ {
+  "t": 3.933333333333329,
+  "type": "seated"
+ },
+ {
+  "t": 3.933333333333329,
+  "type": "cue",
+  "detail": "lidClose"
+ },
+ {
+  "t": 4.466666666666661,
+  "type": "cue",
+  "detail": "engage"
+ },
+ {
+  "t": 4.466666666666661,
+  "type": "doorClosed",
+  "detail": "engaged"
+ },
+ {
+  "t": 4.999999999999992,
+  "type": "press",
+  "detail": "play"
+ },
+ {
+  "t": 4.999999999999992,
+  "type": "cue",
+  "detail": "latch"
+ },
+ {
+  "t": 4.999999999999992,
+  "type": "mode",
+  "detail": "playing"
+ },
+ {
+  "t": 4.999999999999992,
+  "type": "play",
+  "detail": "A:0.0000:spin"
+ },
+ {
+  "t": 15.199999999999957,
+  "type": "press",
+  "detail": "fastForward"
+ },
+ {
+  "t": 15.199999999999957,
+  "type": "cue",
+  "detail": "latch"
+ },
+ {
+  "t": 15.199999999999957,
+  "type": "mode",
+  "detail": "fastForward"
+ },
+ {
+  "t": 16.9,
+  "type": "press",
+  "detail": "play"
+ },
+ {
+  "t": 16.9,
+  "type": "cue",
+  "detail": "latch"
+ },
+ {
+  "t": 16.9,
+  "type": "mode",
+  "detail": "playing"
+ },
+ {
+  "t": 16.9,
+  "type": "play",
+  "detail": "A:21.3518:spin"
+ },
+ {
+  "t": 19.200000000000113,
+  "type": "press",
+  "detail": "pause"
+ },
+ {
+  "t": 19.200000000000113,
+  "type": "cue",
+  "detail": "latch"
+ },
+ {
+  "t": 19.200000000000113,
+  "type": "mode",
+  "detail": "paused"
+ },
+ {
+  "t": 20.200000000000163,
+  "type": "press",
+  "detail": "eject"
+ },
+ {
+  "t": 20.200000000000163,
+  "type": "cue",
+  "detail": "key"
+ },
+ {
+  "t": 20.200000000000163,
+  "type": "cue",
+  "detail": "eject"
+ },
+ {
+  "t": 20.200000000000163,
+  "type": "mode",
+  "detail": "stopped"
+ },
+ {
+  "t": 20.200000000000163,
+  "type": "cue",
+  "detail": "stop"
+ },
+ {
+  "t": 20.200000000000163,
+  "type": "cue",
+  "detail": "lidOpen"
+ },
+ {
+  "t": 21.200000000000212,
+  "type": "flip"
+ },
+ {
+  "t": 21.800000000000242,
+  "type": "cue",
+  "detail": "flip"
+ },
+ {
+  "t": 22.366666666666937,
+  "type": "cue",
+  "detail": "seat"
+ },
+ {
+  "t": 22.366666666666937,
+  "type": "seated"
+ },
+ {
+  "t": 22.800000000000292,
+  "type": "press",
+  "detail": "play"
+ },
+ {
+  "t": 22.800000000000292,
+  "type": "cue",
+  "detail": "latch"
+ },
+ {
+  "t": 22.800000000000292,
+  "type": "cue",
+  "detail": "lidClose"
+ },
+ {
+  "t": 23.333333333333652,
+  "type": "cue",
+  "detail": "engage"
+ },
+ {
+  "t": 23.333333333333652,
+  "type": "doorClosed",
+  "detail": "engaged"
+ },
+ {
+  "t": 23.333333333333652,
+  "type": "mode",
+  "detail": "playing"
+ },
+ {
+  "t": 23.333333333333652,
+  "type": "play",
+  "detail": "B:24.5956:spin"
+ }
+]

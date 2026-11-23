@@ -25,5 +25,20 @@
 - 54 unit tests (transport, machine, store, archive) — `npm test`.
 - 9 Playwright tests on real Chrome with GPU WebGL — `npm run test:e2e`: boot without console/shader errors; audio plays, analyser hears signal, time advances, reels turn; pause freezes both; FF/REW; door tap and drag-to-seat; keyboard; side B; make a tape → reload → play saved audio → delete; invalid upload; export/import + card download.
 
-## Next
-- Milestone 5: demo films. Milestone 6: docs, production build, deploy.
+## Milestone 5 — Demo films ✅
+- `scripts/film.mjs` steps the real app on a virtual clock (`?capture`) and performs the same controller calls a click would; 840 frames per film.
+- Soundtrack re-rendered offline from the logged events (same demo recordings, same Sfx code, gentle limiter; peaks −0.9 dBFS, mean −19 dB). Not a recording of live output — documented.
+- `demo/cassette-study-landscape.mp4` (1920×1080) and `-portrait.mp4` (1080×1920): H.264 High, yuv420p, 30 fps, AAC 48 kHz, 28.00 s, ~34 MB each — verified with ffprobe by `scripts/media.mjs`; published as release assets, not committed.
+- `demo/poster.png`, `demo/contact-sheet.png`, `demo/screenshots/*.jpg`, `demo/reels-loop.{gif,webp}` (loops are release assets).
+
+## Milestone 6 — Docs and deploy ✅
+- README, ARCHITECTURE, TESTING, CASE_STUDY, ATTRIBUTION, SOURCE_AUDIT.
+- Next upgraded 15.5.4 → 15.5.29 (Vercel blocked the vulnerable version). Production build passes (first load 99 kB; Three.js loads with the experience).
+- Live at https://cassette-study-six.vercel.app (Vercel CLI deploy, no Git integration — redeploy with `npx vercel deploy --prod` after pushing). Boot and audio-playback e2e tests pass against the live URL.
+
+## Known limitations
+- Glass groups are ordered per group, not per fragment: at extreme angles with the door half open a thin edge can composite out of order.
+- Flipping a fully rewound tape lands at the end of side B (physically correct); the toast says to rewind.
+- In the portrait film's final seconds the object overlaps the lower controls briefly.
+- `npm audit` still reports Next's bundled build-time `postcss`; fixing it needs a Next major upgrade. Not shipped to the browser.
+- Checked in Chrome (desktop, headless GPU). Safari / Firefox and real touch devices not yet tested by hand.

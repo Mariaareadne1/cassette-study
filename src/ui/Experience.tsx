@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { DeckController, type LoadedTape } from '@/deck/controller';
+import { DeckController, type LoadedTape, type TimelineEntry } from '@/deck/controller';
 import type { KeyName } from '@/engine/geometry/player';
 import { Stage } from '@/engine/stage/Stage';
 import { labelCanvas, type Art } from '@/engine/textures/label';
@@ -26,6 +26,8 @@ declare global {
       stage: Stage;
       ready: boolean;
       labels: (tape: LoadedTape, art: Art | null) => void;
+      /** Capture only: renders the logged session's audio offline and returns a base64 WAV. */
+      soundtrack?: (timeline: TimelineEntry[], duration: number) => Promise<string>;
     };
   }
 }
@@ -76,7 +78,7 @@ export default function Experience() {
             onCassetteDrop: () => controller.drop(),
             onCassetteCancel: () => controller.cancelHold(),
           },
-          { fonts: FONTS, manual, preserveBuffer: manual || q.has('preserve'), reducedMotion: reduced, maxDpr: manual ? 1 : 2 },
+          { fonts: FONTS, manual, preserveBuffer: manual || q.has('preserve'), reducedMotion: reduced, maxDpr: 2 },
         );
       } catch (err) {
         setFailed(err instanceof Error ? err.message : 'WebGL could not start.');
@@ -95,6 +97,15 @@ export default function Experience() {
       const demo: LoadedTape = { meta: DEMO_TAPE, urls: { ...DEMO_URLS } };
       drawLabels(s, demo, null);
       window.__cassette = { controller, stage: s, ready: false, labels: (t, a) => drawLabels(s, t, a) };
+      if (manual) {
+        window.__cassette.soundtrack = async (timeline, duration) => {
+          const { renderSoundtrack, encodeWav } = await import('@/deck/soundtrack');
+          const wav = encodeWav(await renderSoundtrack(timeline, { duration, urls: DEMO_URLS }));
+          let bin = '';
+          for (let i = 0; i < wav.length; i += 0x8000) bin += String.fromCharCode(...wav.subarray(i, i + 0x8000));
+          return btoa(bin);
+        };
+      }
       setEngine({
         controller,
         stage: s,

@@ -28,11 +28,26 @@ export class Sfx {
   private noise: AudioBuffer | null = null;
   private motor: Loop | null = null;
   private wind: Loop | null = null;
+  /** Seeded so offline renders of the same timeline are identical. */
+  private seed = 0x2f6b1d;
+  /** Offline contexts render after scheduling, so nodes must not be torn down on a wall-clock timer. */
+  private readonly offline: boolean;
 
   constructor(
     private readonly ctx: BaseAudioContext,
     private readonly out: AudioNode,
-  ) {}
+  ) {
+    this.offline = typeof OfflineAudioContext !== 'undefined' && ctx instanceof OfflineAudioContext;
+  }
+
+  private rand(): number {
+    this.seed = (this.seed * 1664525 + 1013904223) >>> 0;
+    return this.seed / 0x100000000;
+  }
+
+  private later(fn: () => void): void {
+    if (!this.offline) setTimeout(fn, 400);
+  }
 
   private noiseBuffer(): AudioBuffer {
     if (this.noise) return this.noise;
@@ -61,7 +76,7 @@ export class Sfx {
     g.gain.linearRampToValueAtTime(gain, at + 0.0015);
     g.gain.exponentialRampToValueAtTime(0.0001, at + decay);
     src.connect(bp).connect(g).connect(dest);
-    src.start(at, Math.random() * 1.2);
+    src.start(at, this.rand() * 1.2);
     src.stop(at + decay + 0.02);
   }
 
@@ -94,7 +109,7 @@ export class Sfx {
     g.gain.linearRampToValueAtTime(gain, at + dur * 0.3);
     g.gain.linearRampToValueAtTime(0, at + dur);
     src.connect(bp).connect(g).connect(this.out);
-    src.start(at, Math.random());
+    src.start(at, this.rand());
     src.stop(at + dur + 0.02);
   }
 
@@ -194,9 +209,9 @@ export class Sfx {
         o.frequency.exponentialRampToValueAtTime(40, when + 0.18);
         o.stop(when + 0.2);
         n.stop(when + 0.2);
-        setTimeout(() => {
+        this.later(() => {
           for (const node of [o, lp, og, n, hp, ng]) node.disconnect();
-        }, 400);
+        });
       },
     };
   }
@@ -236,7 +251,7 @@ export class Sfx {
     n.start(at);
     this.wind = {
       setRate: (r: number) => {
-        const now = this.ctx.currentTime;
+        const now = this.offline ? at : this.ctx.currentTime;
         o.frequency.setTargetAtTime(160 + 220 * Math.min(1.6, r), now, 0.1);
       },
       stop: (when = this.ctx.currentTime) => {
@@ -248,9 +263,9 @@ export class Sfx {
         o.frequency.exponentialRampToValueAtTime(70, when + 0.15);
         o.stop(when + 0.18);
         n.stop(when + 0.18);
-        setTimeout(() => {
+        this.later(() => {
           for (const node of [o, bp, g, n, nb, ng]) node.disconnect();
-        }, 400);
+        });
       },
     };
   }

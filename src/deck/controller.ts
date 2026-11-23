@@ -379,6 +379,7 @@ export class DeckController {
     if (from === 'playing') this.sfx?.stopMotor();
     if (from === 'fastForward' || from === 'rewind') this.sfx?.stopWind();
     if (mode === 'playing') {
+      this.log('play', `${s.side}:${s.time.toFixed(4)}:${from === 'paused' ? 'resume' : 'spin'}`);
       this.sfx?.startMotor();
       if (!this.virtualClock && this.audio.hasAudio(s.side)) {
         this.audio.play(s.side, s.time, from !== 'paused').catch((err: unknown) => {
