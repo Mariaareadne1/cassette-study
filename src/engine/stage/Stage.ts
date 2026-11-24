@@ -64,6 +64,8 @@ type Gesture =
 
 export class Stage {
   readonly canvas: HTMLCanvasElement;
+  /** Called right after each frame is drawn. */
+  onRendered: ((canvas: HTMLCanvasElement) => void) | null = null;
   private readonly pipe: Pipeline;
   private readonly camera = new THREE.PerspectiveCamera(FOV, 1, 10, 6000);
   private readonly mats: Materials;
@@ -293,6 +295,8 @@ export class Stage {
     this.updateShadows(f.deck);
     const groups = this.orderGroups(f.deck);
     this.pipe.draw(this.camera, groups, this.scissor());
+    // Read the finished frame now, while its drawing buffer is still valid (e.g. demo recording).
+    this.onRendered?.(this.canvas);
   }
 
   private updateOrbit(dt: number): void {

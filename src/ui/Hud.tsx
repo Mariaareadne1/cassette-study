@@ -51,7 +51,7 @@ export function Hud({ engine, view }: Props) {
   }, []);
   const toggleMute = useCallback(() => controller.setMuted(!controller.getView().muted), [controller]);
   useShortcuts(engine, panel === null, toggleMute);
-  const recorder = useRecorder(stage.canvas, controller.audio);
+  const recorder = useRecorder(stage, controller.audio);
   useEffect(() => {
     if (recorder.error) controller.say(recorder.error);
   }, [recorder.error, controller]);
