@@ -40,10 +40,6 @@ a { color: var(--accent-ink); text-underline-offset: 2px; }
 .cs-stage canvas { display: block; width: 100%; height: 100%; outline: none; }
 
 /* ── masthead ───────────────────────────── */
-.cs-head { position: absolute; left: var(--gutter); top: calc(var(--gutter) - 4px); pointer-events: none; }
-.cs-index { display: flex; gap: 8px; margin: 0; font: 500 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
-.cs-title { margin: 10px 0 0; font: 400 clamp(36px, 4.4vw, 60px)/0.95 var(--serif); letter-spacing: -0.015em; }
-.cs-sub { margin: 10px 0 0; font: 400 12px var(--mono); color: var(--ink-3); }
 
 /* ── top right ─────────────────────────── */
 .cs-actions { position: absolute; right: var(--gutter); top: var(--gutter); display: flex; align-items: center; gap: 6px; }
@@ -123,9 +119,6 @@ kbd { font: 500 11px var(--mono); padding: 2px 6px; border: 1px solid var(--rule
 
 /* ── portrait / small screens ─────────── */
 @media (max-width: 760px) {
-  .cs-head { top: 14px; }
-  .cs-title { font-size: 34px; margin-top: 8px; }
-  .cs-sub { display: none; }
   .cs-actions { top: auto; bottom: calc(var(--gutter) + 132px); right: 50%; transform: translateX(50%); }
   .cs-views { top: 16px; bottom: auto; right: 12px; }
   .cs-views button[aria-pressed] { display: none; }

@@ -23,7 +23,7 @@ export function About() {
         <a href="https://www.typingmind.com" target="_blank" rel="noopener noreferrer">
           TypingMind
         </a>
-        . The cassette player, its mechanism, transport model, sound and library are new work for this study.
+        . The cassette player, its mechanism, transport model, sound and library are new work for this project.
       </p>
       <p>
         Demo recordings “Glass Morning” and “Night Index” are synthesised from code in this repository. Mechanical sounds are

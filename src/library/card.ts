@@ -43,7 +43,7 @@ export function drawCard(
   g.fillStyle = '#85837d';
   g.font = `500 22px ${fonts.mono}`;
   g.textBaseline = 'alphabetic';
-  g.fillText('OBJECT STUDY / 001', m, m + 10);
+  g.fillText('CASSETTE · CS-001', m, m + 10);
   g.textAlign = 'right';
   g.fillText(`TAPE № ${String(index).padStart(3, '0')}`, w - m, m + 10);
   g.textAlign = 'left';
@@ -101,7 +101,7 @@ export function drawCard(
 
   g.fillStyle = '#85837d';
   g.font = `400 20px ${fonts.mono}`;
-  g.fillText('cassette study · rendered in the browser', m, h - 48);
+  g.fillText('rendered in the browser', m, h - 48);
 }
 
 export function cardCanvas(

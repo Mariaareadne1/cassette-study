@@ -48,7 +48,9 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:5560>. Production: `npm run build && npm start` (port 4560).
+Open <http://localhost:5560>. To play your own music locally, put `side-a.m4a`, `side-b.m4a` and a
+`tape.json` in `public/local/` — in development that tape loads instead of the demo. The folder is
+git- and deploy-ignored, so it never leaves your machine. Production: `npm run build && npm start` (port 4560).
 
 | Script | |
 | --- | --- |

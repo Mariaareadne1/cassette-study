@@ -36,6 +36,40 @@ function query(): URLSearchParams {
   return typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search);
 }
 
+/**
+ * Development only: a personal tape kept in public/local/ (git- and deploy-ignored), so music
+ * that can't be redistributed can still play on this machine. Automated browsers get the demo.
+ */
+async function localTape(): Promise<LoadedTape | null> {
+  if (process.env.NODE_ENV !== 'development' || navigator.webdriver) return null;
+  try {
+    const res = await fetch('/local/tape.json', { cache: 'no-store' });
+    if (!res.ok) return null;
+    const raw: unknown = await res.json();
+    const t = raw as { title?: unknown; note?: unknown; sides?: Record<'A' | 'B', { label?: unknown; url?: unknown; duration?: unknown }> };
+    const side = (k: 'A' | 'B') => {
+      const s = t.sides?.[k];
+      const ok = s && typeof s.url === 'string' && s.url.startsWith('/local/') && typeof s.duration === 'number' && s.duration > 0;
+      return ok ? { label: String(s.label ?? `Side ${k}`).slice(0, 48), url: s.url as string, duration: s.duration as number } : null;
+    };
+    const a = side('A');
+    const b = side('B');
+    if (!a && !b) return null;
+    const meta = {
+      ...DEMO_TAPE,
+      title: String(t.title ?? 'My tape').slice(0, 60),
+      note: String(t.note ?? '').slice(0, 80),
+      sides: {
+        A: a ? { ...DEMO_TAPE.sides.A, label: a.label, audioName: a.url, duration: a.duration } : { ...DEMO_TAPE.sides.A, label: 'Blank', duration: 0 },
+        B: b ? { ...DEMO_TAPE.sides.B, label: b.label, audioName: b.url, duration: b.duration } : { ...DEMO_TAPE.sides.B, label: 'Blank', duration: 0 },
+      },
+    };
+    return { meta, urls: { A: a?.url ?? null, B: b?.url ?? null } };
+  } catch {
+    return null;
+  }
+}
+
 export default function Experience() {
   const host = useRef<HTMLDivElement>(null);
   const [engine, setEngine] = useState<Engine | null>(null);
@@ -94,7 +128,7 @@ export default function Experience() {
       controller.onTapeChanged = (tape) => {
         if (tape) drawLabels(s, tape, art);
       };
-      const demo: LoadedTape = { meta: DEMO_TAPE, urls: { ...DEMO_URLS } };
+      const demo: LoadedTape = (!manual && (await localTape())) || { meta: DEMO_TAPE, urls: { ...DEMO_URLS } };
       drawLabels(s, demo, null);
       window.__cassette = { controller, stage: s, ready: false, labels: (t, a) => drawLabels(s, t, a) };
       if (manual) {
@@ -147,7 +181,7 @@ export default function Experience() {
       {failed && (
         <p className="cs-fail" role="alert">
           <strong>The object couldn’t be drawn.</strong>
-          Cassette Study needs WebGL 2, and this browser or device couldn’t start it. Try a recent Chrome, Safari or Firefox with
+          This player needs WebGL 2, and this browser or device couldn’t start it. Try a recent Chrome, Safari or Firefox with
           hardware acceleration on. <small>({failed})</small>
         </p>
       )}

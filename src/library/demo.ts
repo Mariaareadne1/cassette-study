@@ -7,7 +7,7 @@ export const DEMO_TAPE: TapeMeta = {
   schema: SCHEMA_VERSION,
   id: DEMO_ID,
   title: 'Studio Demo',
-  note: 'Recorded for Cassette Study',
+  note: 'Original demo recordings',
   color: '#f3efe6',
   template: 'index',
   artKey: null,

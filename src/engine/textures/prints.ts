@@ -94,7 +94,7 @@ export function deckPrint(fonts: Fonts): HTMLCanvasElement {
   text('STEREO CASSETTE PLAYER', 6, 62.2, 1.5, 0.28);
   text('4.76 cm/s', 98, 66, 1.7, 0.18, 'right');
   text('TYPE I · II', 98, 62.2, 1.5, 0.22, 'right');
-  text('OBJECT STUDY / 001', 52, 9.5, 1.5, 0.36, 'center');
+  text('TWO SIDES · ONE TAPE', 52, 9.5, 1.5, 0.36, 'center');
   text('◀ A   TAPE TRAVEL   B ▶', 52, 6.2, 1.3, 0.24, 'center');
   text('S/N 0001-1999', 6, 3.4, 1.05, 0.2);
   text('MADE FOR LISTENING', 98, 3.4, 1.05, 0.2, 'right');
@@ -195,9 +195,9 @@ export function doorPrint(fonts: Fonts, w: number, h: number): HTMLCanvasElement
   }
   g.font = `400 6.4px ${fonts.serif}`;
   g.textBaseline = 'alphabetic';
-  g.fillText('Cassette Study', 6.2, h - 6.6);
+  g.fillText('Cassette', 6.2, h - 6.6);
   g.font = `500 1.5px ${fonts.mono}`;
-  tracked(g, 'OBJECT STUDY / 001', 6.4, h - 3.4, 0.36);
+  tracked(g, 'MODEL CS-001', 6.4, h - 3.4, 0.36);
   tracked(g, 'AUTO STOP · FULL LOGIC', w - 6.4, h - 3.4, 0.3, 'right');
   g.font = `500 1.9px ${fonts.mono}`;
   tracked(g, '◀  A', fx - 41, fy - 21.2, 0.3);
@@ -222,14 +222,14 @@ export function backPrint(fonts: Fonts, w: number, h: number): HTMLCanvasElement
   g.fillStyle = 'rgba(244,246,250,0.92)';
   g.strokeStyle = 'rgba(244,246,250,0.92)';
   g.font = `400 5px ${fonts.serif}`;
-  g.fillText('Cassette Study', 8, 13);
+  g.fillText('Cassette', 8, 13);
   g.font = `500 1.6px ${fonts.mono}`;
   const lines = [
     'MODEL CS-001  ·  STEREO CASSETTE PLAYER',
     'DC 3V  (1.5V × 2, SIZE AA)',
     'TAPE SPEED 4.76 cm/s  ·  WOW & FLUTTER 0.15% WRMS',
     'FREQUENCY RESPONSE 40 – 14,000 Hz (TYPE II)',
-    'AN OBJECT STUDY. NOT A PRODUCT.',
+    'MADE FOR LISTENING.',
   ];
   lines.forEach((l, i) => tracked(g, l, 8, 18.5 + i * 2.6, 0.2));
   g.lineWidth = 0.12;

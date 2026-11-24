@@ -59,17 +59,9 @@ export function Hud({ engine, view }: Props) {
 
   return (
     <>
-      <header className="cs-head">
-        <p className="cs-index">
-          <span>Object Study</span>
-          <span aria-hidden="true">/</span>
-          <span>001</span>
-        </p>
-        <h1 className="cs-title">Cassette Study</h1>
-        <p className="cs-sub">Clear polycarbonate portable, c. 1998 · working model</p>
-      </header>
+      <h1 className="sr-only">Cassette player</h1>
 
-      <nav className="cs-actions" aria-label="Study">
+      <nav className="cs-actions" aria-label="Tapes">
         <button
           type="button"
           className="cs-pill cs-pill-accent"
@@ -144,7 +136,7 @@ export function Hud({ engine, view }: Props) {
       <Toast message={view.message} />
       {view.loading && <p className="cs-loading-chip">Threading the tape…</p>}
 
-      <Dialog title="About this study" open={panel === 'about'} onClose={close}>
+      <Dialog title="About" open={panel === 'about'} onClose={close}>
         <About />
       </Dialog>
       <Dialog title={editing ? 'Edit tape' : 'Make a tape'} open={panel === 'make'} onClose={close} wide>

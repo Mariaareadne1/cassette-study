@@ -9,3 +9,4 @@ docs/media
 tests
 *.log
 .env*
+public/local

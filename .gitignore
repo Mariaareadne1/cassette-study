@@ -16,3 +16,6 @@ demo/frames/
 next-env.d.ts
 tsconfig.tsbuildinfo
 .next-build/
+
+# Personal music for local playback only; never committed or deployed.
+public/local/

@@ -5,7 +5,7 @@ test.describe('the object and its transport', () => {
   test('boots and renders with no script or shader errors', async ({ page }) => {
     const errors = watchErrors(page);
     await boot(page);
-    await expect(page.getByRole('heading', { name: 'Cassette Study' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Cassette player' })).toBeAttached();
     await untilDeck(page, (p) => p.frames > 30, 'the stage is rendering frames');
     const lit = await page.evaluate(() => {
       const c = document.querySelector('canvas')!;
