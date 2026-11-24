@@ -534,7 +534,12 @@ export class Stage {
         if (Math.hypot(e.clientX - g.sx, e.clientY - g.sy) < TAP_SLOP) return;
         const at = this.worldOnPlane(e, g.depth).add(g.offset);
         if (!this.handlers.onCassetteGrab(at)) {
-          this.gesture = { kind: 'none' };
+          // The tape can't come out right now (it's seated, playing, or the door is shut):
+          // dragging across it turns the whole player instead, like dragging anywhere else.
+          this.gesture = { kind: 'rotate', id: g.id, x: e.clientX, y: e.clientY, sx: g.sx, sy: g.sy, moved: TAP_SLOP, t: performance.now(), hit: null };
+          this.vyaw = 0;
+          this.vpitch = 0;
+          this.canvas.style.cursor = 'grabbing';
           return;
         }
         g.dragging = true;

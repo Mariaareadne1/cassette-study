@@ -10,8 +10,8 @@ import { BRIGHT_FRAG, COPY_FRAG, FINAL_FRAG, ROOM_BAKE_FRAG, SCREEN_VERT, STREAK
 
 export const ROOM_SIZE = 512;
 const MSAA = 4;
-const STARS = 1.25;
-const STAR_THRESHOLD = 2.2;
+const STARS = 0.7;
+const STAR_THRESHOLD = 2.45;
 
 export interface GlassGroup {
   meshes: THREE.Mesh[];

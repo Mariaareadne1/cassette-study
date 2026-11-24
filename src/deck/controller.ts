@@ -231,6 +231,9 @@ export class DeckController {
   }
 
   grab(at: THREE.Vector3): boolean {
+    // A seated tape behind a shut door isn't graspable; say nothing so the drag can turn the player.
+    const snap = this.deck.snapshot();
+    if (snap.cassette === 'seated' && snap.door !== 'open') return false;
     this.ensureSfx();
     const r = this.deck.pickUp({ x: at.x, y: at.y, z: at.z });
     this.process();
