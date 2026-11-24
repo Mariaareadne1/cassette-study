@@ -37,11 +37,12 @@ function query(): URLSearchParams {
 }
 
 /**
- * Development only: a personal tape kept in public/local/ (git- and deploy-ignored), so music
+ * This machine only: a personal tape kept in public/local/ (git- and deploy-ignored), so music
  * that can't be redistributed can still play on this machine. Automated browsers get the demo.
  */
 async function localTape(): Promise<LoadedTape | null> {
-  if (process.env.NODE_ENV !== 'development' || navigator.webdriver) return null;
+  // Only when the page is served from this machine; the public site has no local/ folder anyway.
+  if (!['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname) || navigator.webdriver) return null;
   try {
     const res = await fetch('/local/tape.json', { cache: 'no-store' });
     if (!res.ok) return null;
