@@ -1,6 +1,6 @@
 /**
  * Printed and engraved markings, drawn once into canvases. All lettering is original; no
- * third-party marks. `fonts.mono` / `fonts.serif` are CSS font-family strings loaded by the page.
+ * third-party marks. `fonts.sans` (factory printing) is a CSS font-family string loaded by the page.
  */
 import * as THREE from 'three';
 
@@ -63,7 +63,7 @@ export function deckPrint(fonts: Fonts): HTMLCanvasElement {
   g.scale(1, -1);
   g.fillStyle = '#000';
   g.strokeStyle = '#000';
-  const text = (s: string, x: number, y: number, size: number, track = 0.12, align: 'left' | 'center' | 'right' = 'left', font = fonts.mono, weight = 500): void => {
+  const text = (s: string, x: number, y: number, size: number, track = 0.12, align: 'left' | 'center' | 'right' = 'left', font = fonts.sans, weight = 600): void => {
     g.save();
     g.translate(x, y);
     g.scale(1, -1);
@@ -90,7 +90,7 @@ export function deckPrint(fonts: Fonts): HTMLCanvasElement {
     }
     text(s < 0 ? 'SUPPLY' : 'TAKE-UP', cx, hubY - 14.2, 1.55, 0.32, 'center');
   }
-  text('CS-001', 6, 66, 3.1, 0.3, 'left', fonts.mono, 600);
+  text('CS-001', 6, 66, 3.1, 0.3, 'left', fonts.sans, 700);
   text('STEREO CASSETTE PLAYER', 6, 62.2, 1.5, 0.28);
   text('4.76 cm/s', 98, 66, 1.7, 0.18, 'right');
   text('TYPE I · II', 98, 62.2, 1.5, 0.22, 'right');
@@ -163,7 +163,7 @@ export function keyGlyph(name: (typeof GLYPHS)[number], fonts: Fonts, label: str
       g.fillRect(cx - 1.4, cy + 0.75, 2.8, 0.55);
       break;
   }
-  g.font = `600 1.05px ${fonts.mono}`;
+  g.font = `700 1.05px ${fonts.sans}`;
   g.fillStyle = 'rgba(28,30,34,0.85)';
   tracked(g, label, cx, 7.6, 0.16, 'center');
   return c;
@@ -193,13 +193,13 @@ export function doorPrint(fonts: Fonts, w: number, h: number): HTMLCanvasElement
     g.lineTo(x, fy + 18.2 + tall);
     g.stroke();
   }
-  g.font = `400 6.4px ${fonts.serif}`;
+  g.font = `700 6.4px ${fonts.sans}`;
   g.textBaseline = 'alphabetic';
   g.fillText('Cassette', 6.2, h - 6.6);
-  g.font = `500 1.5px ${fonts.mono}`;
+  g.font = `600 1.5px ${fonts.sans}`;
   tracked(g, 'MODEL CS-001', 6.4, h - 3.4, 0.36);
   tracked(g, 'AUTO STOP · FULL LOGIC', w - 6.4, h - 3.4, 0.3, 'right');
-  g.font = `500 1.9px ${fonts.mono}`;
+  g.font = `600 1.9px ${fonts.sans}`;
   tracked(g, '◀  A', fx - 41, fy - 21.2, 0.3);
   tracked(g, 'B  ▶', fx + 41, fy - 21.2, 0.3, 'right');
   tracked(g, 'OPEN ⏏', w - 6.4, 6.6, 0.34, 'right');
@@ -211,7 +211,7 @@ export function keyStrip(fonts: Fonts, labels: string[], pitch: number): HTMLCan
   const w = pitch * labels.length;
   const { c, g } = canvas(w, 5);
   g.fillStyle = 'rgba(244,246,250,0.95)';
-  g.font = `500 1.35px ${fonts.mono}`;
+  g.font = `600 1.35px ${fonts.sans}`;
   labels.forEach((l, i) => tracked(g, l, pitch * (i + 0.5), 3.1, 0.26, 'center'));
   return c;
 }
@@ -221,9 +221,9 @@ export function backPrint(fonts: Fonts, w: number, h: number): HTMLCanvasElement
   const { c, g } = canvas(w, h);
   g.fillStyle = 'rgba(244,246,250,0.92)';
   g.strokeStyle = 'rgba(244,246,250,0.92)';
-  g.font = `400 5px ${fonts.serif}`;
+  g.font = `700 5px ${fonts.sans}`;
   g.fillText('Cassette', 8, 13);
-  g.font = `500 1.6px ${fonts.mono}`;
+  g.font = `600 1.6px ${fonts.sans}`;
   const lines = [
     'MODEL CS-001  ·  STEREO CASSETTE PLAYER',
     'DC 3V  (1.5V × 2, SIZE AA)',
@@ -237,7 +237,7 @@ export function backPrint(fonts: Fonts, w: number, h: number): HTMLCanvasElement
   g.moveTo(8, 15.2);
   g.lineTo(w - 8, 15.2);
   g.stroke();
-  g.font = `500 1.3px ${fonts.mono}`;
+  g.font = `600 1.3px ${fonts.sans}`;
   tracked(g, 'BATTERY  ⊕ ⊖', w / 2 - 14, h - 13, 0.3, 'center');
   tracked(g, 'S/N 0001', w - 8, h - 5, 0.24, 'right');
   return c;
@@ -247,7 +247,7 @@ export function backPrint(fonts: Fonts, w: number, h: number): HTMLCanvasElement
 export function volumeScale(fonts: Fonts): HTMLCanvasElement {
   const { c, g } = canvas(26, 8);
   g.fillStyle = 'rgba(244,246,250,0.92)';
-  g.font = `500 1.4px ${fonts.mono}`;
+  g.font = `600 1.4px ${fonts.sans}`;
   tracked(g, 'VOL', 1, 3, 0.3);
   for (let i = 0; i < 10; i++) {
     const r = 0.18 + i * 0.05;
@@ -263,9 +263,9 @@ export function volumeScale(fonts: Fonts): HTMLCanvasElement {
 export function shellPrint(fonts: Fonts, side: 'A' | 'B'): HTMLCanvasElement {
   const { c, g } = canvas(100, 64);
   g.fillStyle = 'rgba(255,255,255,0.82)';
-  g.font = `500 7.5px ${fonts.serif}`;
+  g.font = `700 7.5px ${fonts.sans}`;
   g.fillText(side, 4.6, 61.2);
-  g.font = `500 1.5px ${fonts.mono}`;
+  g.font = `600 1.5px ${fonts.sans}`;
   tracked(g, 'CS · 60', 95.6, 59.8, 0.3, 'right');
   tracked(g, 'NORMAL BIAS · TYPE I', 95.6, 61.9, 0.24, 'right');
   tracked(g, `SIDE ${side}`, 50, 46.5, 0.4, 'center');

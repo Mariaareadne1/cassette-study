@@ -9,6 +9,7 @@ import { hintFor } from './hud/hint';
 import { Icon } from './hud/icons';
 import { Toast } from './hud/Toast';
 import { Transport } from './hud/Transport';
+import { useRecorder } from './hud/useRecorder';
 import { useShortcuts } from './hud/useShortcuts';
 import { MakeTape } from './library/MakeTape';
 import { ShelfView } from './library/ShelfView';
@@ -50,6 +51,10 @@ export function Hud({ engine, view }: Props) {
   }, []);
   const toggleMute = useCallback(() => controller.setMuted(!controller.getView().muted), [controller]);
   useShortcuts(engine, panel === null, toggleMute);
+  const recorder = useRecorder(stage.canvas, controller.audio);
+  useEffect(() => {
+    if (recorder.error) controller.say(recorder.error);
+  }, [recorder.error, controller]);
 
   const chooseView = (m: ViewMode): void => {
     setMode(m);
@@ -62,6 +67,16 @@ export function Hud({ engine, view }: Props) {
       <h1 className="sr-only">Cassette player</h1>
 
       <nav className="cs-actions" aria-label="Tapes">
+        <button
+          type="button"
+          className="cs-pill cs-rec"
+          aria-pressed={recorder.recording}
+          title={recorder.recording ? 'Stop and save the video' : 'Record a video of the player (the buttons aren’t filmed)'}
+          onClick={recorder.toggle}
+        >
+          <span className="cs-rec-dot" aria-hidden="true" />
+          {recorder.recording ? `Stop · ${Math.floor(recorder.seconds / 60)}:${String(recorder.seconds % 60).padStart(2, '0')}` : 'Record demo'}
+        </button>
         <button
           type="button"
           className="cs-pill cs-pill-accent"

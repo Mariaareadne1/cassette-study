@@ -46,11 +46,11 @@ async function localTape(): Promise<LoadedTape | null> {
     const res = await fetch('/local/tape.json', { cache: 'no-store' });
     if (!res.ok) return null;
     const raw: unknown = await res.json();
-    const t = raw as { title?: unknown; note?: unknown; sides?: Record<'A' | 'B', { label?: unknown; url?: unknown; duration?: unknown }> };
+    const t = raw as { title?: unknown; note?: unknown; sides?: Record<'A' | 'B', { label?: unknown; artist?: unknown; url?: unknown; duration?: unknown }> };
     const side = (k: 'A' | 'B') => {
       const s = t.sides?.[k];
       const ok = s && typeof s.url === 'string' && s.url.startsWith('/local/') && typeof s.duration === 'number' && s.duration > 0;
-      return ok ? { label: String(s.label ?? `Side ${k}`).slice(0, 48), url: s.url as string, duration: s.duration as number } : null;
+      return ok ? { label: String(s.label ?? `Side ${k}`).slice(0, 48), artist: typeof s.artist === 'string' ? s.artist.slice(0, 48) : '', url: s.url as string, duration: s.duration as number } : null;
     };
     const a = side('A');
     const b = side('B');
@@ -60,8 +60,8 @@ async function localTape(): Promise<LoadedTape | null> {
       title: String(t.title ?? 'My tape').slice(0, 60),
       note: String(t.note ?? '').slice(0, 80),
       sides: {
-        A: a ? { ...DEMO_TAPE.sides.A, label: a.label, audioName: a.url, duration: a.duration } : { ...DEMO_TAPE.sides.A, label: 'Blank', duration: 0 },
-        B: b ? { ...DEMO_TAPE.sides.B, label: b.label, audioName: b.url, duration: b.duration } : { ...DEMO_TAPE.sides.B, label: 'Blank', duration: 0 },
+        A: a ? { ...DEMO_TAPE.sides.A, label: a.label, artist: a.artist, audioName: a.url, duration: a.duration } : { ...DEMO_TAPE.sides.A, label: 'Blank', duration: 0 },
+        B: b ? { ...DEMO_TAPE.sides.B, label: b.label, artist: b.artist, audioName: b.url, duration: b.duration } : { ...DEMO_TAPE.sides.B, label: 'Blank', duration: 0 },
       },
     };
     return { meta, urls: { A: a?.url ?? null, B: b?.url ?? null } };

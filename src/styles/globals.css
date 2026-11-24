@@ -46,6 +46,12 @@ a { color: var(--accent-ink); text-underline-offset: 2px; }
 .cs-pill { white-space: nowrap; height: 34px; padding: 0 14px; border-radius: var(--radius); border: 1px solid var(--rule); background: var(--glass); backdrop-filter: blur(10px); cursor: pointer; font: 500 12px var(--sans); letter-spacing: 0.01em; transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast); }
 .cs-pill:hover { border-color: var(--rule-strong); background: #fff; }
 .cs-pill:active { transform: translateY(1px); }
+.cs-rec { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+.cs-rec-dot { width: 8px; height: 8px; border-radius: 50%; background: #c8352b; box-shadow: 0 0 0 2px rgba(200, 53, 43, 0.16); }
+.cs-rec[aria-pressed='true'] { border-color: #c8352b; color: #a3241c; }
+.cs-rec[aria-pressed='true'] .cs-rec-dot { animation: cs-rec-blink 1s steps(2, start) infinite; }
+@keyframes cs-rec-blink { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .cs-rec[aria-pressed='true'] .cs-rec-dot { animation: none; } }
 .cs-pill-accent { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .cs-pill-accent:hover { background: #2c2d31; border-color: #2c2d31; }
 .cs-icon-btn { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: var(--radius); border: 1px solid var(--rule); background: var(--glass); backdrop-filter: blur(10px); cursor: pointer; transition: border-color var(--t-fast), background var(--t-fast); }

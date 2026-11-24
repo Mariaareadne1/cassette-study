@@ -86,21 +86,24 @@ export function drawLabel(g: CanvasRenderingContext2D, tape: TapeMeta, side: 'A'
   g.fillStyle = ink;
   g.strokeStyle = ink;
   g.textBaseline = 'alphabetic';
+  // Everything on the label is typed, like a home-made tape.
   const serif = (s: number): string => `400 ${s}px ${fonts.serif}`;
-  const serifItalic = (s: number): string => `italic 400 ${s}px ${fonts.serif}`;
-  const mono = (s: number, wt = 500): string => `${wt} ${s}px ${fonts.mono}`;
-  const sideLine = `${meta.label || `Side ${side}`}`;
+  const mono = (s: number, _wt = 400): string => `400 ${s}px ${fonts.serif}`;
+  // Headline is the song itself; the artist (or the tape's name) sits under it.
+  const song = meta.label || `Side ${side}`;
+  const sub = meta.artist || tape.title;
+  const third = meta.artist ? tape.title : tape.note || '';
   const dur = formatDuration(meta.duration);
 
   if (tape.template === 'editorial') {
     drawArt(g, art, w - h, 0, h, ink);
     g.font = serif(7.2);
-    fit(g, tape.title, serif, 7.2, w - h - 13);
-    g.fillText(ellipsize(g, tape.title, w - h - 13), 3.2, 8.6);
-    g.font = mono(1.45);
-    g.globalAlpha = 0.8;
-    g.fillText(ellipsize(g, (tape.note || ' ').toUpperCase(), w - h - 13), 3.3, 12.2);
-    g.fillText(ellipsize(g, `${sideLine.toUpperCase()}  ·  ${dur}`, w - h - 13), 3.3, 14.4);
+    fit(g, song, serif, 7.2, w - h - 13);
+    g.fillText(ellipsize(g, song, w - h - 13), 3.2, 8.6);
+    g.font = mono(1.6);
+    g.globalAlpha = 0.85;
+    g.fillText(ellipsize(g, sub, w - h - 13), 3.3, 12.2);
+    g.fillText(ellipsize(g, third ? `${third}  ·  ${dur}` : dur, w - h - 13), 3.3, 14.4);
     g.globalAlpha = 1;
     g.font = serif(9.5);
     g.textAlign = 'center';
@@ -124,14 +127,14 @@ export function drawLabel(g: CanvasRenderingContext2D, tape: TapeMeta, side: 'A'
     g.fillText('TIME', w - 13, 7.9);
     g.globalAlpha = 1;
     g.font = mono(2.5, 600);
-    fit(g, tape.title.toUpperCase(), (s) => mono(s, 600), 2.5, w - x0 - 3);
-    g.fillText(ellipsize(g, tape.title.toUpperCase(), w - x0 - 3), x0, 5.5);
+    fit(g, song.toUpperCase(), (s) => mono(s, 600), 2.5, w - x0 - 3);
+    g.fillText(ellipsize(g, song.toUpperCase(), w - x0 - 3), x0, 5.5);
     g.font = mono(1.9, 600);
-    g.fillText(ellipsize(g, `${side} — ${sideLine.toUpperCase()}`, w - x0 - 18), x0, 10.4);
+    g.fillText(ellipsize(g, `${side} — ${sub.toUpperCase()}`, w - x0 - 18), x0, 10.4);
     g.fillText(dur, w - 13, 10.4);
     g.font = mono(1.35);
     g.globalAlpha = 0.75;
-    g.fillText(ellipsize(g, (tape.note || '').toUpperCase(), w - x0 - 3), x0, 14.3);
+    g.fillText(ellipsize(g, third.toUpperCase(), w - x0 - 3), x0, 14.3);
     g.globalAlpha = 1;
   } else {
     // Index card: ruled lines, side box, artwork on the right.
@@ -155,13 +158,14 @@ export function drawLabel(g: CanvasRenderingContext2D, tape: TapeMeta, side: 'A'
     g.fillText('SIDE', 2.6, 11);
     g.fillText(dur, 2.6, 13.2);
     g.globalAlpha = 1;
-    g.font = serifItalic(4.6);
-    fit(g, tape.title, serifItalic, 4.6, w - h - 13);
-    g.fillText(ellipsize(g, tape.title, w - h - 13), 10.8, 6.8);
-    g.font = mono(1.5);
-    g.fillText(ellipsize(g, sideLine, w - h - 13), 10.9, 10.4);
+    g.font = serif(3.6);
+    fit(g, song, serif, 3.6, w - h - 13);
+    g.fillText(ellipsize(g, song, w - h - 13), 10.8, 6.8);
+    g.font = mono(1.8);
+    g.fillText(ellipsize(g, sub, w - h - 13), 10.9, 10.4);
     g.globalAlpha = 0.75;
-    g.fillText(ellipsize(g, tape.note || '', w - h - 13), 10.9, 14.0);
+    g.font = mono(1.5);
+    g.fillText(ellipsize(g, third, w - h - 13), 10.9, 14.0);
     g.globalAlpha = 1;
     drawArt(g, art, w - h + 0.8, 1.6, h - 3.2, ink);
   }

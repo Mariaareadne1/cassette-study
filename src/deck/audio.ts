@@ -77,6 +77,16 @@ export class AudioEngine {
     return this.sfxBus;
   }
 
+  /** A live copy of everything the player sounds (music and mechanism), for recording a demo. */
+  tap(): { stream: MediaStream; release: () => void } | null {
+    const ctx = this.unlock();
+    const master = this.master;
+    if (!ctx || !master) return null;
+    const dest = ctx.createMediaStreamDestination();
+    master.connect(dest);
+    return { stream: dest.stream, release: () => master.disconnect(dest) };
+  }
+
   private route(ch: Channel): void {
     if (!this.ctx || !this.music || ch.node) return;
     try {

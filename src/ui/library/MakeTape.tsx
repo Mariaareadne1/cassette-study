@@ -159,6 +159,15 @@ export function MakeTape({ engine, shelf, initial, onDone }: Props) {
             onFocus={() => setPreviewSide(side)}
           />
         </label>
+        <label className="cs-field">
+          <span>Artist</span>
+          <input
+            value={meta.artist ?? ''}
+            maxLength={LIMITS.sideLabel}
+            onChange={(e) => patchSide(side, { artist: e.target.value })}
+            onFocus={() => setPreviewSide(side)}
+          />
+        </label>
         <div className="cs-file">
           <input
             id={id}

@@ -11,7 +11,10 @@ export const TEMPLATES: readonly LabelTemplate[] = ['index', 'editorial', 'mono'
 export const LABEL_COLORS = ['#f3efe6', '#e7ecef', '#f1e3cf', '#dfe6dc', '#e9dde3', '#202226'] as const;
 
 export interface SideMeta {
+  /** The song or programme on this side; the label's headline. */
   label: string;
+  /** Who made it, shown under the title. */
+  artist?: string;
   /** Blob key in the media store, or null for a blank side. */
   audioKey: string | null;
   audioName: string | null;
@@ -89,6 +92,7 @@ function side(v: unknown, name: 'A' | 'B'): SideMeta {
   const o = (v && typeof v === 'object' ? v : {}) as Record<string, unknown>;
   return {
     label: str(o.label, LIMITS.sideLabel, `Side ${name}`),
+    artist: str(o.artist, LIMITS.sideLabel),
     audioKey: key(o.audioKey),
     audioName: o.audioName == null ? null : str(o.audioName, 120),
     duration: Math.min(Math.max(num(o.duration), 0), LIMITS.maxDuration),

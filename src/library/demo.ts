@@ -12,8 +12,8 @@ export const DEMO_TAPE: TapeMeta = {
   template: 'index',
   artKey: null,
   sides: {
-    A: { label: 'Glass Morning', audioKey: null, audioName: 'side-a.m4a', duration: 48.2 },
-    B: { label: 'Night Index', audioKey: null, audioName: 'side-b.m4a', duration: 41.8 },
+    A: { label: 'Glass Morning', artist: 'Studio Demo', audioKey: null, audioName: 'side-a.m4a', duration: 48.2 },
+    B: { label: 'Night Index', artist: 'Studio Demo', audioKey: null, audioName: 'side-b.m4a', duration: 41.8 },
   },
   createdAt: 0,
   updatedAt: 0,
